@@ -1,8 +1,6 @@
 """
 This is a drawing tool to draw G-Code via a mouse pointer on screen.
 """
-import _thread
-import os
 import threading
 import time
 import typing
@@ -13,12 +11,16 @@ import re
 
 mouse = Controller()
 
-# the scale of the
+# the scale of the drawing
 DRAW_SCALE = 3
+# the drawing interval (pause between mouse movements)
+DRAW_INTERVAL = 0.005
 
 # the offset for the starting position of the drawing, adjust according to G-Code
 X_OFFSET = 100
 Y_OFFSET = 100
+
+G_CODE_PATH = "./gcode/fry_and_bender.gcode"
 
 
 class MouseMovement(typing.TypedDict):
@@ -89,7 +91,7 @@ def draw_function():
                         pos['x'] * DRAW_SCALE + x_start_pos,
                         pos['y'] * DRAW_SCALE + y_start_pos
                     )
-                    time.sleep(0.005)
+                    time.sleep(DRAW_INTERVAL)
                 else:
                     break
 
@@ -107,7 +109,7 @@ def set_operational_status(status: Operational):
 
 
 if __name__ == '__main__':
-    with open("fry_and_bender.gcode", "r") as gcode_file:
+    with open(G_CODE_PATH, "r") as gcode_file:
         lines = gcode_file.readlines()
 
         for command in lines:
